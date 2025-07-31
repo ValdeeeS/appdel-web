@@ -1,0 +1,41 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recomendador | Appdel</title>
+<meta name="theme-color" content="#2E6BE5"><link rel="stylesheet" href="assets/styles.css"><script defer src="assets/app.js"></script></head><body>
+<header class="header"><div class="wrap nav">
+  <a href="index.html" class="logo" aria-label="Inicio"><img src="assets/logo.png" alt="Logo Appdel"><span class="brand">Appdel</span></a>
+  <button class="hamb" aria-label="Abrir menú">☰</button>
+  <nav class="navlinks" aria-label="Navegación principal">
+    <a href="index.html">Inicio</a><a href="palas.html">Catálogo</a><a href="recomendador.html">Recomendador</a><a href="sobre.html">Sobre</a><a href="contacto.html">Contacto</a>
+    <a class="btn ghost" href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a>
+    <a class="btn" href="recomendador.html">Empezar</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <section class="card reveal"><h1>Recomendador con IA</h1>
+    <div class="chat">
+      <div class="chat-hd"><img class="agent" id="avatarLola" src="assets/avatars/lola-smile.svg" alt="Lola avatar"><strong>Lola · Appdel</strong></div>
+      <div class="chat-body" id="chat"></div>
+      <div class="chat-in"><input id="input" class="input field" placeholder="Cuéntame tu nivel, presupuesto, estilo..." /><button id="send" class="btn">Enviar</button></div>
+      <div class="chips" id="chips" style="padding:10px"><span class="btn ghost">Presupuesto 120€</span><span class="btn ghost">Busco control</span></div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap foot"><span>© Appdel</span><a href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a></div></footer>
+<script src="assets/data.js"></script>
+<script type="module" src="assets/chat.js"></script>
+<script>
+  const chat=document.getElementById('chat'); const input=document.getElementById('input'); const send=document.getElementById('send');
+  function say(t,who='ai'){const m=document.createElement('div');m.className='msg '+(who==='ai'?'ai':'me');m.textContent=t;chat.appendChild(m);chat.scrollTop=chat.scrollHeight;}
+  async function handle(t){
+    if(!t) return;
+    const ava = document.getElementById('avatarLola'); if(ava) ava.src='assets/avatars/lola-thinking.svg';
+    say(t,'me'); input.value='';
+    const recs=(window.RACKETS||[]).slice(0,3);
+    try{ const mod=await import('./assets/chat.js'); const text = await mod.appdelChat({level:'intermediate',budget:120,style:'control',freq:3,recommendations:recs}); say(text); }
+    catch(e){ say('No puedo conectar ahora.'); console.error(e); }
+    finally{ if(ava) ava.src='assets/avatars/lola-smile.svg'; }
+  }
+  send.onclick=()=>handle(input.value.trim()); input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send.click();}});
+  say('¡Hola! Soy Lola. Te ayudaré a elegir pala. Cuéntame un poco.');
+</script>
+</body></html>

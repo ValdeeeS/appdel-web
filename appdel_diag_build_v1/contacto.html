@@ -1,0 +1,32 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contacto | Appdel</title>
+<meta name="theme-color" content="#2E6BE5"><link rel="stylesheet" href="assets/styles.css"><script defer src="assets/app.js"></script></head><body>
+<header class="header"><div class="wrap nav">
+  <a href="index.html" class="logo" aria-label="Inicio"><img src="assets/logo.png" alt="Logo Appdel"><span class="brand">Appdel</span></a>
+  <button class="hamb" aria-label="Abrir menú">☰</button>
+  <nav class="navlinks" aria-label="Navegación principal">
+    <a href="index.html">Inicio</a><a href="palas.html">Catálogo</a><a href="recomendador.html">Recomendador</a><a href="sobre.html">Sobre</a><a href="contacto.html">Contacto</a>
+    <a class="btn ghost" href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a>
+    <a class="btn" href="recomendador.html">Empezar</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <section class="card reveal"><h1>Contacto</h1>
+    <form action="https://formsubmit.co/juanantoniov20@gmail.com" method="POST" style="display:grid;gap:12px;max-width:520px">
+      <input type="hidden" name="_subject" value="Nueva solicitud desde Appdel">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="gracias.html">
+      <label>Nombre <input class="input" name="name" required></label>
+      <label>Email <input class="input" type="email" name="email" required></label>
+      <label>Mensaje <textarea class="input" name="message" rows="5" required></textarea></label>
+      <button class="btn" type="submit">Enviar</button>
+    </form>
+  </section>
+</main>
+<footer class="footer"><div class="wrap foot"><span>© Appdel</span><a href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a></div></footer>
+<script>
+  // Prefill desde catálogo
+  const pre = sessionStorage.getItem('prefill'); if(pre){ const ta=document.querySelector('textarea[name=message]'); if(ta) ta.value=pre; sessionStorage.removeItem('prefill'); }
+</script>
+</body></html>

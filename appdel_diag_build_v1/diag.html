@@ -1,0 +1,60 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnóstico Appdel</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+.box{background:#fff;border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+.ok{color:#16a34a;font-weight:700}.bad{color:#dc2626;font-weight:700}
+pre{white-space:pre-wrap;word-break:break-word;background:#f8fafc;border:1px solid var(--stroke);border-radius:12px;padding:10px}
+</style>
+</head><body>
+<header class="header"><div class="wrap nav"><div class="logo"><img src="assets/logo.png" alt="Appdel" style="height:40px"><span class="brand">Appdel · Diagnóstico</span></div></div></header>
+<main class="wrap">
+  <section class="box">
+    <h1>Comprobaciones</h1>
+    <ol>
+      <li>La función <code>/chat</code> existe y responde.</li>
+      <li><code>OPENAI_API_KEY</code> está disponible en Functions.</li>
+      <li>Petición de ejemplo devuelve texto.</li>
+    </ol>
+    <button class="btn" id="run">Ejecutar pruebas</button>
+  </section>
+
+  <section class="box"><h2>Resultado</h2>
+    <div id="out"></div>
+  </section>
+</main>
+<script>
+const out = document.getElementById('out');
+function log(html){ const p=document.createElement('div'); p.innerHTML=html; out.appendChild(p); }
+
+document.getElementById('run').onclick = async () => {
+  out.innerHTML = '';
+  // 1) Health
+  try{
+    const r = await fetch('/.netlify/functions/health');
+    const j = await r.json();
+    log(`<p>Health: <span class="${j.ok?'ok':'bad'}">${j.ok?'OK':'NO KEY'}</span> · Modelo: <code>${j.model}</code></p>`);
+  }catch(e){ log('<p class="bad">Health error</p>'); }
+
+  // 2) HEAD to chat (should be 405), then POST
+  try{
+    const r = await fetch('/.netlify/functions/chat');
+    log(`<p>Chat GET → ${r.status} (esperado 405)</p>`);
+  }catch(e){ log('<p class="bad">Chat GET error</p>'); }
+
+  try{
+    const r = await fetch('/.netlify/functions/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ level:'intermediate', budget:120, style:'control', freq:3, recommendations:[] })
+    });
+    const t = await r.text();
+    let txt = t;
+    try{ const j = JSON.parse(t); txt = j.text || j.error || t; }catch{}
+    const ok = r.ok;
+    log(`<p>Chat POST → <span class="${ok?'ok':'bad'}">${ok?'OK':'ERROR '+r.status}</span></p><pre>${txt}</pre>`);
+  }catch(e){ log('<p class="bad">Chat POST error</p><pre>'+e.message+'</pre>'); }
+};
+</script>
+</body></html>

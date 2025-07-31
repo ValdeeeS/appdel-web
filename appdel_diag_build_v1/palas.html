@@ -1,0 +1,63 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Catálogo | Appdel</title>
+<meta name="theme-color" content="#2E6BE5"><link rel="stylesheet" href="assets/styles.css"><script defer src="assets/app.js"></script></head><body>
+<header class="header"><div class="wrap nav">
+  <a href="index.html" class="logo" aria-label="Inicio"><img src="assets/logo.png" alt="Logo Appdel"><span class="brand">Appdel</span></a>
+  <button class="hamb" aria-label="Abrir menú">☰</button>
+  <nav class="navlinks" aria-label="Navegación principal">
+    <a href="index.html">Inicio</a><a href="palas.html">Catálogo</a><a href="recomendador.html">Recomendador</a><a href="sobre.html">Sobre</a><a href="contacto.html">Contacto</a>
+    <a class="btn ghost" href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a>
+    <a class="btn" href="recomendador.html">Empezar</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <section class="card reveal"><h1>Catálogo</h1>
+    <div class="filters">
+      <label> Nivel<br>
+        <select id="f-level"><option value="">Todos</option><option value="beginner">Principiante</option><option value="intermediate">Intermedio</option><option value="advanced">Avanzado</option><option value="women">Mujer</option><option value="kids">Junior</option></select>
+      </label>
+      <label> Estilo<br>
+        <select id="f-style"><option value="">Todos</option><option value="control">Control</option><option value="balanced">Equilibrado</option><option value="power">Potencia</option></select>
+      </label>
+      <label> Precio máx (€)<br><input id="f-price" class="input" type="number" min="0" step="10" placeholder="Ej. 200"></label>
+      <button id="f-apply" class="btn" type="button">Aplicar</button>
+      <span class="badge" id="count">0 resultados</span>
+    </div>
+    <div id="catalog" class="catalog"></div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap foot"><span>© Appdel</span><a href="https://www.instagram.com/appdel_" target="_blank" rel="noopener">Instagram</a></div></footer>
+<script src="assets/data.js"></script>
+<script>
+  function render(items){
+    const el=document.getElementById('catalog'); const count=document.getElementById('count'); el.innerHTML='';
+    (items||[]).forEach(x=>{
+      const card=document.createElement('div'); card.className='tile';
+      card.innerHTML=`<img alt="Pala ${x.brand} ${x.model}" src="${x.img}" width="160" height="160" loading="lazy" decoding="async">
+        <div class="meta">
+          <div style="font-weight:700">${x.brand} ${x.model}</div>
+          <div class="badge">${x.level} · ${x.style} · ${x.shape||''}</div>
+          <div class="price">€${x.price}</div>
+          <div style="color:var(--muted)">${x.description||''}</div>
+          <div class="buy" style="margin-top:6px"><button class="btn" data-buy="${x.brand} ${x.model}">Solicitar info</button></div>
+        </div>`;
+      el.appendChild(card);
+    });
+    if(count) count.textContent=(items||[]).length+' resultados';
+    el.querySelectorAll('[data-buy]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const p = e.currentTarget.getAttribute('data-buy');
+        sessionStorage.setItem('prefill','Hola, me interesa la pala '+p+'. ¿Disponibilidad y precio?');
+        window.location.href='contacto.html';
+      });
+    });
+  }
+  function apply(){
+    const lv=document.getElementById('f-level').value; const st=document.getElementById('f-style').value; const max=parseFloat(document.getElementById('f-price').value||'0');
+    const filtered=(window.RACKETS||[]).filter(x=> (lv?x.level===lv:true) && (st?x.style===st:true) && (max?x.price<=max:true));
+    render(filtered);
+  }
+  document.getElementById('f-apply').addEventListener('click', apply);
+  render(window.RACKETS||[]);
+</script>
+</body></html>
